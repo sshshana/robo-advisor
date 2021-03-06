@@ -34,7 +34,7 @@ pip install -r requirements.txt
 
 ## Setup
  
-You will need an API Key to issue requests to the [AlphaVantage API](https://www.alphavantage.co/). Please visit the alphavantage.co thorugh the link and get your API Key.
+Before using this application, you need an API Key to issue requests to the [AlphaVantage API Key](https://www.alphavantage.co/). Please click the link and get your API Key. (e.g. "abc123")
 
 Then, in your project repository, create an .env file and set a variable called `ALPHAADVANTAGE_API_KEY` and assign the value of your API key as a string. Please see the example below:
 

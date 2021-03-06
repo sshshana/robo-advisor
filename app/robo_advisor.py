@@ -9,33 +9,39 @@ import requests
 import json
 # from getpass import getpass
 
-from datetime import datetime
 from dotenv import load_dotenv 
-
-load_dotenv() # read env var(API key) from the ".env" file (read README.md)
-API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="abc123") # uses the os module to read the specified environment variable and store it in a corresponding python variable
+from datetime import datetime
 
 def to_usd(my_price):
-    """
-    Converts a numeric value to usd-formatted string, for printing and display purposes.
-
-    Param: my_price (int or float) like 4000.444444
-
-    Example: to_usd(4000.444444)
-
-    Returns: $4,000.44
-    """
-    return "${0:,.2f}".format(my_price) #f"${my_price:,.2}" #> $12,000.71
-
+    return "${0:,.2f}".format(my_price)
 
 #
 # info inputs
 #
 
-current_time = datetime.now().strftime("%Y-%m-%d")
+today_date = datetime.now().strftime("%Y-%m-%d %I:%M %p")
 
-request_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSLA&apikey={API_KEY}"
-response = requests.get(request_url)
+load_dotenv() # read env var(API key) from the ".env" file (read README.md)
+API_KEY = os.getenv("ALPHAVANTAGE_API_KEY") # uses the os module to read the specified environment variable and store it in a corresponding python variable
+
+
+# preliminary input validation
+while True:
+    stock_symbol = input("Please input a stock or cryptocurrency symbol (e.g. MSFT, AAPL, etc.)")
+    if 1 <= len(stock_symbol) <= 5 and stock_symbol.isdecimal() == False:
+        request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stock_symbol}&apikey={API_KEY}"
+        response = requests.get(request_url)
+        if response.status_code != 200 or "Error Message" in response.text:
+            print("Sorry, couldn't find any trading data for that stock symbol. Please try again.")
+        else:
+            break
+    else:
+        print("Oh, expecting a properly-formed stock symbol like 'MSFT'. Please try again.")
+
+#
+# get data
+#
+
 # print(type(response)) # <class 'requests.models.Response'>
 # print(response.status_code) # 200
 # print(response.text) # string output of the object
@@ -68,9 +74,7 @@ recent_low = min(low_prices)
 #
 
 
-
-
-csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", f"stockdata_{stock_symbol}.csv")
 
 csv_headers = ("date", "open", "high", "low", "close", "volume")
 with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writing"
@@ -92,10 +96,10 @@ with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writin
 
 
 print("-------------------------")
-print("SELECTED SYMBOL: XYZ")
+print("SELECTED SYMBOL:", stock_symbol)
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
-print("REQUEST AT:", current_time) # shopping cart project
+print("REQUEST AT:", today_date)
 print("-------------------------")
 print("LATEST DAY:", last_refreshed)
 print("LATEST CLOSE:", to_usd(float(lastest_close)))
