@@ -22,7 +22,7 @@ Use Anaconda to create and activate a new virtual environment, perhaps called "r
 
 ```sh
 conda create -n stocks-env python=3.8 
-conda activate sotcks-env
+conda activate stocks-env
 ```
 In your new virtual environment, install package dependencies:
 
@@ -33,8 +33,15 @@ pip install -r requirements.txt
 > NOTE: if this command throws an error like "Could not open requirements file: [Errno 2] No such file or directory", make sure you are running it from the repository's root directory, where the requirements.txt file exists (see the initial `cd` step above)
 
 ## Setup
+ 
+You will need an API Key to issue requests to the [AlphaVantage API](https://www.alphavantage.co/). Please visit the alphavantage.co thorugh the link and get your API Key.
 
-In your project repository, update the .env file and update the environement variable named `ALPHAADVANTAGE_API_KEY` according to your API key.
+Then, in your project repository, create an .env file and set a variable called `ALPHAADVANTAGE_API_KEY` and assign the value of your API key as a string. Please see the example below:
+
+```sh
+ALPHAVANTAGE_API_KEY="abc123"
+```
+
 
 > NOTE: If you don't update your API key, it will be set as abc123 by default.
 

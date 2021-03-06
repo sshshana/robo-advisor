@@ -1,5 +1,42 @@
 # this is the "app/robo_advisor.py" file
 
+# Import all the modules and third-party packages that contain the functionality we need:
+# We want to allow users choose their own user names by creating a separate virtual environment
+
+import os
+import requests
+import json
+# from getpass import getpass
+
+from dotenv import load_dotenv 
+
+# After that, we generally run any setup code, like setting environment vars:
+
+load_dotenv() # read env var(API key) from the ".env" file (read README.md)
+API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="abc123") # uses the os module to read the specified environment variable and store it in a corresponding python variable
+
+
+#
+# info inputs
+#
+
+request_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSLA&apikey={API_KEY}"
+response = requests.get(request_url)
+# print(type(response)) # <class 'requests.models.Response'>
+# print(response.status_code) # 200
+# print(response.text) # string output of the object
+
+parsed_response = json.loads(response.text)
+
+breakpoint()
+
+
+
+
+#
+# info outputs
+#
+
 print("-------------------------")
 print("SELECTED SYMBOL: XYZ")
 print("-------------------------")
