@@ -3,6 +3,7 @@
 # Import all the modules and third-party packages that contain the functionality we need:
 # We want to allow users choose their own user names by creating a separate virtual environment
 
+import csv
 import os
 import requests
 import json
@@ -66,6 +67,30 @@ recent_low = min(low_prices)
 # info outputs
 #
 
+
+
+
+csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+
+csv_headers = ("date", "open", "high", "low", "close", "volume")
+with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writing"
+    writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
+    writer.writeheader() # uses fieldnames set above
+
+    # loop to write each row
+    for date in dates:
+        daily_data = tsd[date]
+        writer.writerow({
+            "date": date,
+            "open": float(daily_data["1. open"]),
+            "high": float(daily_data["2. high"]),
+            "low": float(daily_data["3. low"]),
+            "close": float(daily_data["4. close"]),
+            "volume": float(daily_data["5. volume"])
+            })
+
+
+
 print("-------------------------")
 print("SELECTED SYMBOL: XYZ")
 print("-------------------------")
@@ -80,5 +105,8 @@ print("-------------------------")
 print("RECOMMENDATION: BUY!")
 print("RECOMMENDATION REASON: TODO")
 print("-------------------------")
+print("WRITING DATA TO CSV...", csv_file_path)
+print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
+
