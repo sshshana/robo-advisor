@@ -52,6 +52,8 @@ python app/robo_advisor.py
 
 The stock data retrieved through Alpha Vantage will be stored as a CSV file under the subdirectory called "data". The CSV file will be named as, for example, "stockdata_AAPL.csv".
 
+The application will calcaulte the annualized return based on the most recent 
+
 
 Here are some important tips that will help you use this application effectively:
  
