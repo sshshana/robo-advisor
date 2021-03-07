@@ -39,13 +39,8 @@ while True:
         print("Oh, expecting a properly-formed stock symbol like 'MSFT'. Please try again.")
 
 #
-# get data
+# get data from Alpha Vantage
 #
-
-# print(type(response)) # <class 'requests.models.Response'>
-# print(response.status_code) # 200
-# print(response.text) # string output of the object
-
 parsed_response = json.loads(response.text)
 
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
@@ -63,16 +58,13 @@ for date in dates:
     high_prices.append(float(high_price))
     low_price = tsd[date]["3. low"]
     low_prices.append(float(low_price))
-# maximum of all high prices / minimum of all low prices
+# maximum of all high prices & minimum of all low prices
 recent_high = max(high_prices)
 recent_low = min(low_prices)
-
-
 
 #
 # info outputs
 #
-
 
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", f"stockdata_{stock_symbol}.csv")
 
@@ -94,7 +86,38 @@ with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writin
             })
 
 
+# make a list of closed prices
+closed_prices = []
+for date in dates:
+    closed_price = tsd[date]["4. close"]
+    closed_prices.append(float(closed_price))
 
+# calculate daily returns and make a list
+daily_returns = []
+for i in range(len(closed_prices)-1):
+    daily_returns.append(closed_prices[i+1]/closed_prices[i]-1)
+
+# calcualte annualized return (using geometric average approach)
+pprr = 0
+product = 1
+for i in daily_returns:
+    pprr = i + 1
+    product *= pprr
+annualized_return = product**(365/len(daily_returns)) - 1
+formatted_return = "{}%".format(round(annualized_return*100, 2))
+
+# give recommendations based on the annualized return
+if annualized_return > 0.1:
+    profitability = "High"
+    reason = f"The stock's annualized return is {formatted_return}, which is higher than 10% and, therefore, very promising!"
+elif annualized_return > 0:
+    profitability = "Moderate"
+    reason = f"The stock's annualized return is {formatted_return}, which falls between 0% and 10%. It seems like you have a moderate chance to be profitable with this option."
+else:
+    profitability = "Low"
+    reason = f"The stock's annualized return is {formatted_return}, which is lower than zero. You're probably going to lose money with this option."
+
+# print the results
 print("-------------------------")
 print("SELECTED SYMBOL:", stock_symbol)
 print("-------------------------")
@@ -106,8 +129,8 @@ print("LATEST CLOSE:", to_usd(float(lastest_close)))
 print("RECENT HIGH:", to_usd(float(recent_high)))
 print("RECENT LOW:", to_usd(float(recent_low)))
 print("-------------------------")
-print("RECOMMENDATION: BUY!")
-print("RECOMMENDATION REASON: TODO")
+print(f"The stock's expected return is: {profitability}!")
+print(f"RECOMMENDATION REASON: {reason}")
 print("-------------------------")
 print("WRITING DATA TO CSV...", csv_file_path)
 print("-------------------------")

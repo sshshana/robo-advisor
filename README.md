@@ -43,42 +43,19 @@ ALPHAVANTAGE_API_KEY="abc123"
 ```
 
 
-> NOTE: If you don't update your API key, it will be set as abc123 by default.
-
-
-
-
-
-
-
-## Setup
-
-In your project repository, update sales_tax_rate variable in the ".env" file according to your city's sales tax rate. Please see the exmaple below (which assumes the tax rate is 8.75%):
-
-```sh
-sales_tax_rate=8.75
-```
-> NOTE: Do not include percentage sign (%) in the code
-> NOTE: If you don't customize your tax rate, it will be use New York City's sales tax rate of 8.75%
-
-
 ## Usage
-Run the program and follow the instructions the system prompts:
+Run the application. The application is in the subdirectory called "app":
 
 ```py
-python shopping-cart.py
+python app/robo_advisor.py
 ```
 
-Here are some important tips that will help you use this program effectively:
+The stock data retrieved through Alpha Vantage will be stored as a CSV file under the subdirectory called "data". The CSV file will be named as, for example, "stockdata_AAPL.csv".
 
- + Please verify that you enter the correct identifier of the product you want to scan.
 
- + If the item is priced by pound, the program will ask you to enter the pound of the product. Please follow the instructions.
-
- + Enter `DONE` once you complete scanning all the products you have. Then the program will proceed to checkout.
+Here are some important tips that will help you use this application effectively:
  
  + If you want to send a copy of the receipt to a customer's email, enter `y` after the checkout. Then input the customer's email address as the program prompts.
-
 
 
 > NOTE: if you see an error like "ModuleNotFoundError: No module named '...'", it's because the given package isn't installed, so run the `pip` command above to ensure that package has been installed into the virtual environment
