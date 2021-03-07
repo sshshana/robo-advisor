@@ -50,14 +50,16 @@ Run the application. The application is in the subdirectory called "app":
 python app/robo_advisor.py
 ```
 
-The stock data retrieved through Alpha Vantage will be stored as a CSV file under the subdirectory called "data". The CSV file will be named as, for example, "stockdata_AAPL.csv".
+Once launched, the application will ask you to enter the stock symbol of your interest. Please follow the insturctions the applicaiton prompts.
 
-The application will calcaulte the annualized return based on the most recent 
+Once you enter the symbol, the stock data will be retrieved, and the application will calculate the annualized return based on the data, following the steps below:
+ 1. Retrieve closed stock prices of the past 100 days.
+ 2. Calculate daily returns.
+ 3. Calcaulte geometric average of the returns.
+ 4. Annualize the calculated geometric-average return.
 
+Based on the annualized return, the application will tell you whether the expected return on the stock is high, medium, or low. It will also provide you the reason for its evaluation.
 
-Here are some important tips that will help you use this application effectively:
- 
- + If you want to send a copy of the receipt to a customer's email, enter `y` after the checkout. Then input the customer's email address as the program prompts.
-
+The retrieved stock data will be stored as a CSV file under the subdirectory called "data". The CSV file will be named as, for example, "stockdata_AAPL.csv", "stockdata_MSFT.csv",  etc.
 
 > NOTE: if you see an error like "ModuleNotFoundError: No module named '...'", it's because the given package isn't installed, so run the `pip` command above to ensure that package has been installed into the virtual environment
