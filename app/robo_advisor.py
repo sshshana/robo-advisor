@@ -7,9 +7,11 @@ import csv
 import os
 import requests
 import json
+import pandas as pd
+import sys # to assign a dynamic name to a variable in for loop
+import random
+import matplotlib.pyplot as plt
 from statistics import geometric_mean
-# from getpass import getpass
-
 from dotenv import load_dotenv 
 from datetime import datetime
 
@@ -65,31 +67,37 @@ for response in responses:
     stock_name = parsed_response["Meta Data"]["2. Symbol"]
     last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 
-    tsd = parsed_response["Weekly Time Series"]
-    dates = list(tsd.keys())
+    tsw = parsed_response["Weekly Time Series"]
+    dates = list(tsw.keys())
     latest_day = dates[0]
-    lastest_close = tsd[latest_day]["4. close"] # TODO: make sure the series is in a chronological order
-
+    lastest_close = tsw[latest_day]["4. close"] 
+    
     #
     # calculate 52-week high and 52-week low
     #
 
-    # get high & low prices from weekly data
+    # get high & low & closed prices from weekly data
     high_prices = []
     low_prices = []
-    i = 1 # to store weekly data of the recent 52 weeks
+    closed_prices = []
+
+    i = 1 # to select the most recent 52 weeks
     for date in dates:
         if i > 52:
             break
         else:
-            high_price = tsd[date]["2. high"]
+            high_price = tsw[date]["2. high"]
             high_prices.append(float(high_price))
-            low_price = tsd[date]["3. low"]
+            low_price = tsw[date]["3. low"]
             low_prices.append(float(low_price))
+            closed_price = tsw[date]["4. close"]
+            closed_prices.append(float(closed_price))
             i += 1
+
     # maximum of all high prices & minimum of all low prices
     recent_high = max(high_prices)
     recent_low = min(low_prices)
+
 
     #
     # info outputs
@@ -104,7 +112,7 @@ for response in responses:
 
         # loop to write each row
         for date in dates:
-            weekly_data = tsd[date]
+            weekly_data = tsw[date]
             writer.writerow({
                 "date": date,
                 "open": float(weekly_data["1. open"]),
@@ -115,18 +123,7 @@ for response in responses:
                 })
 
 
-    # make a list of closed prices of the past 52 weeks
-    closed_prices = []
-    i = 1
-    for date in dates:
-        if i > 52:
-            break
-        else:
-            closed_price = tsd[date]["4. close"]
-            closed_prices.append(float(closed_price))
-            i += 1
-
-    # calculate weekly returns and make a list
+    # calculate weekly returns from the closed prices list
     weekly_returns = []
     w = 0
     for w in range(len(closed_prices)-1):
@@ -166,6 +163,14 @@ for response in responses:
         You'll be better off putting your money in your saving account.
         """
 
+    # store data in dataframe to create a plot at the end of the application
+    df = pd.DataFrame.from_dict(tsw, orient="index").iloc[:52]
+    df = df.iloc[::-1] # reverse the order of the data (from oldest to newest)
+    globals()[f"df_{responses.index(response)}"] = df.astype(float)
+
+    # convert data type from string to float
+    # df[["open", "high", "low", "close", "volume"]] = df[["open", "high", "low", "close", "volume"]].astype(float)
+
     # print the results
     print(f"""
     -------------------------
@@ -190,7 +195,19 @@ for response in responses:
     -------------------------
     """)
 
+# show a plot that has all the stock closed price on one graph
+all_df = pd.DataFrame(index=df_0.index)
+s = 0
+for stock in stock_symbols:
+    all_df[stock] = globals()[f"df_{s}"]["4. close"]
+    s += 1
 
+# plt.figure()
+all_df.plot()
+plt.legend(loc='best')
+plt.title("Stock Prices over 52 Weeks", fontsize=20)
+plt.xlabel("Time")
+plt.ylabel("Prices")
+plt.gca().yaxis.set_major_formatter('${x:,.0f}')
 
-
-
+plt.show()

@@ -3,4 +3,6 @@
 
 requests
 python-dotenv
-# pandas
+alpha_vantage
+matplotlib
+pandas
