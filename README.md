@@ -62,7 +62,7 @@ If you close the window that shows the chart, the application will give you more
 
 The application also calculates the annualized return based on the data, following the steps below:
  1. Retrieve adjusted close stock prices of the past 52 weeks.
- 2. Calculate wekly returns.
+ 2. Calculate weekly returns.
  3. Calcaulte geometric average of the weekly returns.
  4. Annualize the calculated geometric-average return.
 
